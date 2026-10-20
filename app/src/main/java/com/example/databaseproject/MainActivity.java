@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView idView;
     private EditText productBox;
     private EditText skuBox;
+    private FeedReaderDbHelper feedReaderDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,18 @@ public class MainActivity extends AppCompatActivity {
         idView = findViewById(R.id.productID);
         productBox = findViewById(R.id.productName);
         skuBox = findViewById(R.id.productSku);
+
+        // Persisting the database connection (Android Developers SQLite guide)
+        feedReaderDbHelper = new FeedReaderDbHelper(this);
+        if (feedReaderDbHelper.findEntryIdsByTitle("SEG2505").isEmpty()) {
+            feedReaderDbHelper.insertEntry("SEG2505", "Semaine 6 : SQLite et Android");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        feedReaderDbHelper.close();
+        super.onDestroy();
     }
 
     public void newProduct(View view) {
