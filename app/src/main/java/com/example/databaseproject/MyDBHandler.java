@@ -19,7 +19,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    // Used by the tests: passing a null name creates an in-memory database
+    // Used by the tests to work on a separate database file
     public MyDBHandler(Context context, String name) {
         super(context, name, null, DATABASE_VERSION);
     }
