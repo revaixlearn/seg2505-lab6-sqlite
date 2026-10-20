@@ -1,6 +1,8 @@
 package com.example.databaseproject;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -38,5 +40,41 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
         onCreate(db);
+    }
+
+    public void addProduct(Product product) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PRODUCTNAME, product.getProductName());
+        values.put(COLUMN_SKU, product.getSku());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.insert(TABLE_PRODUCTS, null, values);
+        db.close();
+    }
+
+    public Product findProduct(String productName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_PRODUCTS +
+                " WHERE " + COLUMN_PRODUCTNAME + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{productName});
+
+        Product product = null;
+        if (cursor.moveToFirst()) {
+            product = new Product();
+            product.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+            product.setProductName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCTNAME)));
+            product.setSku(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_SKU)));
+        }
+        cursor.close();
+        db.close();
+        return product;
+    }
+
+    public boolean removeProduct(String productName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rows = db.delete(TABLE_PRODUCTS, COLUMN_PRODUCTNAME + " = ?", new String[]{productName});
+        db.close();
+        return rows > 0;
     }
 }
