@@ -7,6 +7,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +22,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Keep the content below the action bar now that apps are drawn edge-to-edge
+        View root = findViewById(R.id.main);
+        int padding = root.getPaddingLeft();
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left + padding, systemBars.top + padding,
+                    systemBars.right + padding, systemBars.bottom + padding);
+            return insets;
+        });
 
         idView = findViewById(R.id.productID);
         productBox = findViewById(R.id.productName);
